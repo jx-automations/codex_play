@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#08111f"/>
+  <!-- O letter mark in orange -->
+  <circle cx="96" cy="96" r="52" fill="none" stroke="#f97316" stroke-width="16"/>
+  <!-- Arrow / flow indicator -->
+  <path d="M80 76 L116 96 L80 116" fill="none" stroke="#f97316" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
