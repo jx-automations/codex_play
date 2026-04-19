@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can only read/write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Solo-user team model: teamId === userId
+    // Any authenticated user can fully manage their own team subtree
+    match /teams/{teamId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == teamId;
+    }
+
+    // Deny everything else by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

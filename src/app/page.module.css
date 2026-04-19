@@ -1,6 +1,24 @@
 .page {
+  --bg: #08111f;
+  --bg-alt: #0c1730;
+  --surface: rgba(13, 24, 47, 0.88);
+  --border: rgba(148, 163, 184, 0.16);
+  --text: #ecf5ff;
+  --text-muted: #9fb4d1;
+  --text-dim: #7187a3;
+  --accent: #f97316;
+  --accent-soft: #fdba74;
+  --accent-2: #22c55e;
+  --shadow-xl: 0 26px 80px rgba(3, 10, 26, 0.55);
+
   min-height: 100vh;
   padding: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 28%),
+    radial-gradient(circle at 85% 10%, rgba(249, 115, 22, 0.12), transparent 24%),
+    linear-gradient(180deg, var(--bg-alt), var(--bg));
+  color: var(--text);
+  font-family: var(--font-sans);
 }
 
 .shell {

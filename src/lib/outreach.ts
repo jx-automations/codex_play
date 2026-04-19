@@ -38,17 +38,18 @@ export const PLATFORMS = [
 
 export const PAGE_TITLES = {
   today: "Today",
+  pipeline: "Pipeline",
   prospects: "Prospects",
-  log: "Log Outreach",
   analytics: "Analytics",
+  log: "Log Outreach",
   settings: "Settings",
 } as const;
 
 export const NAV_ITEMS = [
-  { href: "/app/today", key: "today", label: "Today", shortLabel: "TD", description: "What needs action now" },
-  { href: "/app/prospects", key: "prospects", label: "Prospects", shortLabel: "PR", description: "Pipeline and search" },
-  { href: "/app/log", key: "log", label: "Log", shortLabel: "LG", description: "Add a new lead" },
-  { href: "/app/settings", key: "settings", label: "Settings", shortLabel: "ST", description: "Targets, backup, and sync" },
+  { href: "/today",     key: "today",     label: "Today",     shortLabel: "TD", description: "What needs action now" },
+  { href: "/pipeline",  key: "pipeline",  label: "Pipeline",  shortLabel: "KN", description: "Kanban stage board" },
+  { href: "/prospects", key: "prospects", label: "Prospects", shortLabel: "PR", description: "Search and filter" },
+  { href: "/analytics", key: "analytics", label: "Analytics", shortLabel: "AN", description: "Metrics and trends" },
 ] as const;
 
 export const DEFAULT_SETTINGS = {

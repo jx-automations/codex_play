@@ -9,7 +9,7 @@ import styles from "@/app/page.module.css";
 export function LandingPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextHref = searchParams.get("next") || "/app/today";
+  const nextHref = searchParams.get("next") || "/today";
   const { configured, error, signInWithGoogle, signOutUser, status } = useAuth();
 
   async function handleLaunch() {

@@ -5,7 +5,7 @@
 const CACHE_NAME = "outreachflow-v1";
 
 // Static assets to precache on install
-const PRECACHE_URLS = ["/", "/app/today", "/offline.html"];
+const PRECACHE_URLS = ["/", "/today", "/offline.html"];
 
 // ── Install ──────────────────────────────────────────────────────────────────
 self.addEventListener("install", (event) => {

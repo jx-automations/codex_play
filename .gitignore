@@ -43,3 +43,5 @@ next-env.d.ts
 # turbopack build artifacts
 /.next-build/
 /.next-runtime/
+
+.vercel

@@ -6,12 +6,12 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "OutreachFlow",
     description:
       "Log Instagram prospects in 30 seconds. Never miss a follow-up.",
-    start_url: "/app/today",
+    start_url: "/today",
     scope: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#08111f",
-    theme_color: "#08111f",
+    background_color: "#FAFAFA",
+    theme_color: "#6366F1",
     categories: ["business", "productivity"],
     icons: [
       {

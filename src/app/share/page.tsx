@@ -46,7 +46,7 @@ function ShareRedirect() {
     }
 
     const query = dest.toString();
-    router.replace(`/app/log${query ? `?${query}` : ""}`);
+    router.replace(`/today${query ? `?add=true&${query}` : ""}`);
   }, [router, searchParams]);
 
   return null;
