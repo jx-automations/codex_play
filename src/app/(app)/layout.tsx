@@ -15,10 +15,11 @@ export default function AppLayout({
     <AuthGuard>
       <AddProspectProvider>
         <OfflineBanner />
-        <div className="min-h-screen pb-16 md:pb-0">
+        <BottomNav />
+        {/* Content area: push right on desktop for sidebar, up on mobile for bottom nav */}
+        <div className="min-h-screen pb-16 md:pb-0 md:pl-60">
           {children}
         </div>
-        <BottomNav />
         <FloatingActionButton />
         <AddProspectSheet />
         <NotificationPrompt />

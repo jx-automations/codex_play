@@ -17,16 +17,18 @@ export function KanbanColumn({ stage, prospects }: KanbanColumnProps) {
 
   return (
     <div
-      className="flex w-64 shrink-0 flex-col rounded-xl bg-neutral-50 snap-start"
-      style={{ scrollSnapAlign: "start" }}
+      className="shrink-0 flex flex-col rounded-2xl bg-neutral-50"
+      style={{ width: 280, minWidth: 280, scrollSnapAlign: "start" }}
     >
-      {/* Column header */}
+      {/* Header */}
       <div
-        className="flex items-center justify-between rounded-t-xl px-3 py-2.5"
+        className="flex items-center justify-between rounded-t-2xl px-3 py-3"
         style={{ borderTop: `3px solid ${accent}` }}
       >
-        <span className="text-xs font-semibold text-neutral-700">{PIPELINE_STAGE_LABELS[stage]}</span>
-        <span className="rounded-full bg-neutral-200 px-1.5 py-0.5 text-xs font-medium text-neutral-500">
+        <span className="font-heading text-xs font-semibold text-neutral-700">
+          {PIPELINE_STAGE_LABELS[stage]}
+        </span>
+        <span className="rounded-full bg-neutral-200 px-2 py-0.5 text-xs font-semibold text-neutral-500">
           {prospects.length}
         </span>
       </div>
@@ -34,7 +36,7 @@ export function KanbanColumn({ stage, prospects }: KanbanColumnProps) {
       {/* Drop zone */}
       <div
         ref={setNodeRef}
-        className={`flex-1 space-y-2 p-2 transition-colors duration-150 ${
+        className={`flex-1 space-y-2 p-2 transition-colors duration-150 rounded-b-2xl ${
           isOver ? "bg-primary-light" : ""
         }`}
         style={{ minHeight: 120 }}

@@ -28,12 +28,11 @@ export function KanbanBoard() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor,   { activationConstraint: { delay: 250, tolerance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
   );
 
   function handleDragStart({ active }: DragStartEvent) {
-    const found = prospects.find((p) => p.id === active.id);
-    setActiveProspect(found ?? null);
+    setActiveProspect(prospects.find((p) => p.id === active.id) ?? null);
   }
 
   async function handleDragEnd({ active, over }: DragEndEvent) {
@@ -43,7 +42,6 @@ export function KanbanBoard() {
     const prospect = prospects.find((p) => p.id === active.id);
     if (!prospect) return;
 
-    // `over.id` is either a column stage id or another card's id — resolve to column
     const newStage = (
       PIPELINE_STAGES.includes(over.id as PipelineStage)
         ? over.id
@@ -54,19 +52,14 @@ export function KanbanBoard() {
 
     const db = getFirebaseDb();
     if (!db) return;
-
-    await writeProspect(db, user.uid, {
-      ...prospect,
-      pipelineStage: newStage,
-      updatedAt: new Date(),
-    });
+    await writeProspect(db, user.uid, { ...prospect, pipelineStage: newStage, updatedAt: new Date() });
   }
 
   if (loading) {
     return (
-      <div className="flex gap-4 overflow-x-auto p-4">
-        {PIPELINE_STAGES.slice(0, 4).map((s) => (
-          <div key={s} className="h-48 w-64 shrink-0 animate-pulse rounded-xl bg-neutral-100" />
+      <div className="flex gap-3 overflow-x-auto px-4 pb-6 pt-2">
+        {PIPELINE_STAGES.slice(0, 5).map((s) => (
+          <div key={s} className="h-48 w-[280px] shrink-0 animate-pulse rounded-2xl bg-neutral-100" />
         ))}
       </div>
     );
@@ -84,16 +77,16 @@ export function KanbanBoard() {
       onDragEnd={handleDragEnd}
     >
       <div
-        className="flex gap-3 overflow-x-auto p-4 pb-6"
-        style={{ scrollSnapType: "x mandatory" }}
+        className="flex gap-3 overflow-x-auto pb-6 pt-2 no-scrollbar"
+        style={{ padding: "8px 16px 24px", scrollSnapType: "x mandatory" }}
       >
         {PIPELINE_STAGES.map((stage) => (
           <KanbanColumn key={stage} stage={stage} prospects={byStage[stage]} />
         ))}
       </div>
 
-      <DragOverlay>
-        {activeProspect ? <KanbanCard prospect={activeProspect} /> : null}
+      <DragOverlay dropAnimation={null}>
+        {activeProspect ? <KanbanCard prospect={activeProspect} isDragOverlay /> : null}
       </DragOverlay>
     </DndContext>
   );

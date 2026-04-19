@@ -8,16 +8,16 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, showSettings = true }: PageHeaderProps) {
   return (
-    <div className="flex items-start justify-between px-4 pb-3 pt-5">
+    <div className="flex items-start justify-between px-4 pb-2 pt-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold text-neutral-900">{title}</h1>
-        {subtitle && <p className="mt-0.5 text-sm text-neutral-500">{subtitle}</p>}
+        <h1 className="font-heading text-2xl font-semibold text-neutral-900">{title}</h1>
+        {subtitle && <p className="mt-0.5 text-sm text-neutral-400">{subtitle}</p>}
       </div>
       {showSettings && (
         <Link
           href="/settings"
           aria-label="Settings"
-          className="mt-1 flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+          className="mt-1 flex h-9 w-9 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
             <circle cx="12" cy="12" r="3" />

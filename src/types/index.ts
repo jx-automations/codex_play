@@ -53,18 +53,18 @@ export const FREE_TIER_STAGES: PipelineStage[] = [
 
 /** Tailwind color classes for each pipeline stage badge */
 export const STAGE_BADGE_CLASSES: Record<PipelineStage, { bg: string; text: string }> = {
-  prospect_found:     { bg: 'bg-neutral-100',  text: 'text-neutral-700' },
-  first_dm_sent:      { bg: 'bg-blue-100',     text: 'text-blue-700' },
-  followup_1_sent:    { bg: 'bg-indigo-100',   text: 'text-indigo-700' },
-  followup_2_sent:    { bg: 'bg-violet-100',   text: 'text-violet-700' },
-  followup_3_sent:    { bg: 'bg-purple-100',   text: 'text-purple-700' },
-  left_on_read:       { bg: 'bg-neutral-200',  text: 'text-neutral-600' },
-  replied_interested: { bg: 'bg-emerald-100',  text: 'text-emerald-700' },
-  replied_objection:  { bg: 'bg-amber-100',    text: 'text-amber-700' },
-  in_conversation:    { bg: 'bg-cyan-100',     text: 'text-cyan-700' },
-  call_scheduled:     { bg: 'bg-sky-100',      text: 'text-sky-700' },
-  won:                { bg: 'bg-green-100',    text: 'text-green-700' },
-  lost:               { bg: 'bg-red-100',      text: 'text-red-600' },
+  prospect_found:     { bg: 'bg-zinc-100',     text: 'text-zinc-600' },
+  first_dm_sent:      { bg: 'bg-blue-50',      text: 'text-blue-600' },
+  followup_1_sent:    { bg: 'bg-indigo-50',    text: 'text-indigo-600' },
+  followup_2_sent:    { bg: 'bg-violet-50',    text: 'text-violet-600' },
+  followup_3_sent:    { bg: 'bg-purple-50',    text: 'text-purple-600' },
+  left_on_read:       { bg: 'bg-zinc-200',     text: 'text-zinc-500' },
+  replied_interested: { bg: 'bg-emerald-50',   text: 'text-emerald-600' },
+  replied_objection:  { bg: 'bg-amber-50',     text: 'text-amber-600' },
+  in_conversation:    { bg: 'bg-cyan-50',      text: 'text-cyan-600' },
+  call_scheduled:     { bg: 'bg-sky-50',       text: 'text-sky-600' },
+  won:                { bg: 'bg-green-50',     text: 'text-green-600' },
+  lost:               { bg: 'bg-red-50',       text: 'text-red-500' },
 };
 
 /** Hex accent colors for Kanban column headers and charts */
