@@ -38,10 +38,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!auth) return undefined;
 
     // Pick up the result after a signInWithRedirect round-trip
-    getRedirectResult(auth).catch((redirectError) => {
-      setError(redirectError instanceof Error ? redirectError.message : "Sign-in failed.");
-      setStatus("unauthenticated");
-    });
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) console.log("[Auth] redirect sign-in ok:", result.user.email);
+      })
+      .catch((redirectError) => {
+        console.error("[Auth] getRedirectResult error:", redirectError?.code, redirectError?.message);
+        setError(redirectError instanceof Error ? redirectError.message : "Sign-in failed.");
+        setStatus("unauthenticated");
+      });
 
     const unsubscribe = onAuthStateChanged(
       auth,
@@ -71,9 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setError(null);
+    console.log("[Auth] calling signInWithRedirect, origin:", typeof window !== "undefined" ? window.location.origin : "ssr");
     try {
       await signInWithRedirect(auth, createGoogleProvider());
     } catch (authError) {
+      console.error("[Auth] signInWithRedirect error:", (authError as { code?: string })?.code, authError);
       setError(authError instanceof Error ? authError.message : "Sign in failed.");
       throw authError;
     }

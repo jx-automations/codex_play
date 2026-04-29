@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useAuth } from "@/context/auth-context";
 
@@ -9,15 +9,43 @@ import styles from "@/app/page.module.css";
 
 const AUTH_NEXT_KEY = "auth_next";
 
+function parseAuthError(raw: string, hostname: string): { title: string; body: string; fix: string } {
+  if (raw.includes("auth/unauthorized-domain")) {
+    return {
+      title: "Domain not authorized",
+      body: `Firebase is blocking sign-in because "${hostname}" is not in its allowlist.`,
+      fix: `Fix → Firebase Console → Authentication → Settings → Authorized domains → Add domain → paste: ${hostname}`,
+    };
+  }
+  if (raw.includes("auth/operation-not-allowed")) {
+    return {
+      title: "Google sign-in not enabled",
+      body: "The Google sign-in provider is disabled in your Firebase project.",
+      fix: "Fix → Firebase Console → Authentication → Sign-in methods → Google → Enable",
+    };
+  }
+  if (raw.includes("auth/popup-blocked")) {
+    return {
+      title: "Popup blocked",
+      body: "Your browser blocked the sign-in popup.",
+      fix: "Allow popups for this site and try again, or use a different browser.",
+    };
+  }
+  return { title: "Sign-in error", body: raw, fix: "" };
+}
+
 export function LandingPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextHref = searchParams.get("next") || "/today";
   const { configured, error, signInWithGoogle, signOutUser, status } = useAuth();
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [hostname, setHostname] = useState("");
 
-  // After the Google redirect round-trip, onAuthStateChanged fires and
-  // status becomes "authenticated". If we stored a destination before
-  // leaving, navigate there now.
+  useEffect(() => {
+    setHostname(window.location.hostname);
+  }, []);
+
   useEffect(() => {
     if (status !== "authenticated") return;
     const dest = sessionStorage.getItem(AUTH_NEXT_KEY) ?? null;
@@ -31,18 +59,30 @@ export function LandingPageClient() {
       router.push(nextHref);
       return;
     }
-
-    // Store destination before the full-page redirect to Google
+    setIsSigningIn(true);
     sessionStorage.setItem(AUTH_NEXT_KEY, nextHref);
     try {
       await signInWithGoogle();
     } catch {
       sessionStorage.removeItem(AUTH_NEXT_KEY);
+      setIsSigningIn(false);
     }
   }
 
+  const parsedError = error ? parseAuthError(error, hostname) : null;
+
+  const signInLabel = isSigningIn ? "Redirecting to Google…" : "Try it free";
+  const signInDisabled = !configured || isSigningIn;
+
   return (
     <main className={styles.page}>
+      {parsedError && (
+        <div className={styles.errorBanner}>
+          <strong>{parsedError.title}</strong>
+          <p>{parsedError.body}</p>
+          {parsedError.fix && <p className={styles.errorFix}>{parsedError.fix}</p>}
+        </div>
+      )}
       <div className={styles.shell}>
         <header className={styles.header}>
           <div className={styles.brand}>
@@ -63,8 +103,8 @@ export function LandingPageClient() {
                 </button>
               </>
             ) : (
-              <button className={styles.primaryButton} disabled={!configured} onClick={handleLaunch}>
-                {configured ? "Try it free" : "Add Firebase env first"}
+              <button className={styles.primaryButton} disabled={signInDisabled} onClick={handleLaunch}>
+                {configured ? signInLabel : "Add Firebase env first"}
               </button>
             )}
           </div>
@@ -79,8 +119,8 @@ export function LandingPageClient() {
               in your browser — no app install, no context switch, no excuses.
             </p>
             <div className={styles.heroActions}>
-              <button className={styles.primaryButton} disabled={!configured} onClick={handleLaunch}>
-                {status === "authenticated" ? "Open OutreachFlow" : "Try it free — 25 prospects, no credit card"}
+              <button className={styles.primaryButton} disabled={signInDisabled} onClick={handleLaunch}>
+                {status === "authenticated" ? "Open OutreachFlow" : (configured ? signInLabel : "Add Firebase env first")}
               </button>
             </div>
             <p className={styles.notice}>
@@ -88,7 +128,7 @@ export function LandingPageClient() {
                 ? "Sign in with Google and start logging prospects immediately."
                 : "Firebase client env vars are expected in `.env.local`. See `.env.example` for the project values."}
             </p>
-            {error ? <p className={styles.notice}>{error}</p> : null}
+            {!configured && <p className={styles.notice}>Firebase client env vars are expected in <code>.env.local</code>. See <code>.env.example</code> for the project values.</p>}
           </div>
 
           <aside className={styles.heroAside}>
@@ -206,8 +246,8 @@ export function LandingPageClient() {
             when you need unlimited prospects and CSV export.
           </p>
           <div className={styles.heroActions}>
-            <button className={styles.primaryButton} disabled={!configured} onClick={handleLaunch}>
-              {status === "authenticated" ? "Go to Today" : "Start free — no credit card"}
+            <button className={styles.primaryButton} disabled={signInDisabled} onClick={handleLaunch}>
+              {status === "authenticated" ? "Go to Today" : (configured ? signInLabel : "Start free — no credit card")}
             </button>
           </div>
         </section>
