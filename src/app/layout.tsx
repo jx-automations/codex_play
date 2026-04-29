@@ -8,14 +8,14 @@ import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  variable: "--font-heading",
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const workSans = Work_Sans({
   subsets: ["latin"],
-  variable: "--font-work-sans",
+  variable: "--font-body",
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });

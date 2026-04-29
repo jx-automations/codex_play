@@ -74,7 +74,7 @@ export function ProspectList() {
   return (
     <div>
       {/* Search bar */}
-      <div className="sticky top-0 z-10 border-b border-neutral-100 bg-white px-4 py-3">
+      <div className="sticky top-0 z-10 border-b border-neutral-100 bg-neutral-50 px-4 py-3">
         <input
           type="search"
           value={search}
@@ -114,7 +114,7 @@ export function ProspectList() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
-            className="rounded-lg border-0 bg-transparent text-xs text-neutral-600 outline-none focus:ring-0"
+            className="rounded-lg border border-neutral-200 bg-white px-2 py-1 text-xs text-neutral-600 outline-none focus:border-primary"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>

@@ -18,7 +18,7 @@ export function KanbanColumn({ stage, prospects }: KanbanColumnProps) {
   return (
     <div
       className="shrink-0 flex flex-col rounded-2xl bg-neutral-50"
-      style={{ width: 280, minWidth: 280, scrollSnapAlign: "start" }}
+      style={{ width: 260, minWidth: 260, scrollSnapAlign: "start" }}
     >
       {/* Header */}
       <div

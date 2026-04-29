@@ -59,7 +59,7 @@ export function KanbanBoard() {
     return (
       <div className="flex gap-3 overflow-x-auto px-4 pb-6 pt-2">
         {PIPELINE_STAGES.slice(0, 5).map((s) => (
-          <div key={s} className="h-48 w-[280px] shrink-0 animate-pulse rounded-2xl bg-neutral-100" />
+          <div key={s} className="h-48 w-[260px] shrink-0 animate-pulse rounded-2xl bg-neutral-100" />
         ))}
       </div>
     );
@@ -78,7 +78,7 @@ export function KanbanBoard() {
     >
       <div
         className="flex gap-3 overflow-x-auto pb-6 pt-2 no-scrollbar"
-        style={{ padding: "8px 16px 24px", scrollSnapType: "x mandatory" }}
+        style={{ padding: "8px 16px 16px", scrollSnapType: "x mandatory" }}
       >
         {PIPELINE_STAGES.map((stage) => (
           <KanbanColumn key={stage} stage={stage} prospects={byStage[stage]} />

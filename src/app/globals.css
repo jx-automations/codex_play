@@ -21,11 +21,11 @@
   --color-neutral-800: #27272A;
   --color-neutral-900: #18181B;
 
-  /* Typography */
-  --font-sans:    var(--font-work-sans,    "Work Sans",    system-ui, sans-serif);
-  --font-display: var(--font-space-grotesk,"Space Grotesk",system-ui, sans-serif);
-  --font-heading: var(--font-space-grotesk,"Space Grotesk",system-ui, sans-serif);
-  --font-body:    var(--font-work-sans,    "Work Sans",    system-ui, sans-serif);
+  /* Typography — Next.js injects --font-heading and --font-body on <html> at runtime */
+  --font-sans:    "Work Sans",    system-ui, sans-serif;
+  --font-display: "Space Grotesk",system-ui, sans-serif;
+  --font-heading: "Space Grotesk",system-ui, sans-serif;
+  --font-body:    "Work Sans",    system-ui, sans-serif;
 
   /* Radius */
   --radius-sm:   4px;
@@ -47,6 +47,12 @@
 }
 
 /* ── Hard reset — remove every possible viewport border/outline ── */
+:root {
+  color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
+  accent-color: var(--color-primary);
+}
+
 html,
 body {
   margin: 0;
@@ -54,12 +60,25 @@ body {
   border: 0 !important;
   outline: 0 !important;
   box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent;
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  border-color: inherit;
+}
+
+/* Override Tailwind v4 default focus outline */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 html {
@@ -73,7 +92,7 @@ body {
   min-height: 100vh;
   background-color: #FAFAFA;
   color: #18181B;
-  font-family: var(--font-body);
+  font-family: var(--font-body, "Work Sans", system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;

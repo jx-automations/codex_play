@@ -17,7 +17,7 @@ export default function AppLayout({
         <OfflineBanner />
         <BottomNav />
         {/* Content area: push right on desktop for sidebar, up on mobile for bottom nav */}
-        <div className="min-h-screen pb-16 md:pb-0 md:pl-60">
+        <div className="min-h-screen pb-20 md:pb-0 md:pl-60">
           {children}
         </div>
         <FloatingActionButton />

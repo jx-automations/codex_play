@@ -28,7 +28,7 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-8 text-center">
         <div>
-          <p className="font-display text-lg font-semibold text-neutral-900">Firebase not configured</p>
+          <p className="font-heading text-lg font-semibold text-neutral-900">Firebase not configured</p>
           <p className="mt-2 text-sm text-neutral-500">Add your Firebase env vars to <code className="rounded bg-neutral-100 px-1">.env.local</code> to use the app.</p>
         </div>
       </div>

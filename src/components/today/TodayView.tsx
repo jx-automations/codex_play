@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Settings } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 import { useAddProspect } from "@/context/add-prospect-context";
+import { useAuth } from "@/context/auth-context";
 import { useProspects } from "@/hooks/useProspects";
 import { useSettings } from "@/hooks/useSettings";
+import { getFirebaseDb } from "@/lib/firebase";
+import { subscribeTodayDmCount } from "@/lib/firestore";
 import { StageBadge } from "@/components/ui/StageBadge";
 import { type Prospect } from "@/types";
 
@@ -107,7 +111,21 @@ export function TodayView() {
   const { prospects, loading } = useProspects();
   const { settings } = useSettings();
   const { open } = useAddProspect();
+  const { user } = useAuth();
   const searchParams = useSearchParams();
+
+  // Notes-based DM count — falls back to 0 if index not yet deployed
+  const [notesDmCount, setNotesDmCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const db = getFirebaseDb();
+    if (!db) return;
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    const unsub = subscribeTodayDmCount(db, user.uid, midnight, (count) => setNotesDmCount(count));
+    return unsub;
+  }, [user]);
 
   useEffect(() => {
     if (searchParams.get("add") === "true") {
@@ -153,10 +171,18 @@ export function TodayView() {
       (p) => p.firstContactedAt && p.firstContactedAt >= midnight && p.firstContactedAt < tomorrow,
     ).length;
 
-    return { overdue, dueToday, recentReplies, dmsSentToday, dailyGoal };
+    return { overdue, dueToday, recentReplies, dmsSentToday };
   }, [prospects, settings.dailyGoal]);
 
   const dailyGoal = settings.dailyGoal ?? 10;
+  // Prefer notes-based count (accurate) over prospect-based approximation
+  const dmsCount = notesDmCount ?? dmsSentToday;
+
+  const todayLabel = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 
   if (loading) {
     return (
@@ -175,7 +201,22 @@ export function TodayView() {
   const goalReached = dmsSentToday >= dailyGoal;
 
   return (
-    <div className="px-4 pb-8 pt-4 space-y-8">
+    <div className="px-4 pb-8 pt-6 space-y-6">
+
+      {/* Date header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="font-heading text-xs font-medium uppercase tracking-wider text-neutral-400">Today</p>
+          <h1 className="font-heading text-xl font-semibold text-neutral-900">{todayLabel}</h1>
+        </div>
+        <Link
+          href="/settings"
+          aria-label="Settings"
+          className="mt-1 flex h-9 w-9 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600"
+        >
+          <Settings className="h-5 w-5" strokeWidth={1.75} />
+        </Link>
+      </div>
 
       {/* ── Section A: Daily Progress ── */}
       <section>
@@ -183,20 +224,20 @@ export function TodayView() {
           <div className="mb-3 flex items-baseline justify-between">
             <p className="font-heading text-sm font-medium text-neutral-700">DMs sent today</p>
             <p className="font-heading text-lg font-semibold text-neutral-900">
-              {dmsSentToday}
+              {dmsCount}
               <span className="text-sm font-normal text-neutral-400"> / {dailyGoal}</span>
             </p>
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
             <div
               className="h-full rounded-full bg-primary transition-all duration-500"
-              style={{ width: `${progressPct}%` }}
+              style={{ width: `${Math.min(100, (dmsCount / dailyGoal) * 100)}%` }}
             />
           </div>
-          <p className={`mt-2 text-xs font-medium ${goalReached ? "text-success" : "text-neutral-400"}`}>
-            {goalReached
-              ? "Goal reached! 🎉"
-              : `${dailyGoal - dmsSentToday} to go`}
+          <p className={`mt-2 text-xs font-medium ${dmsCount >= dailyGoal ? "text-success" : "text-neutral-400"}`}>
+            {dmsCount >= dailyGoal
+              ? "Goal reached!"
+              : `${dailyGoal - dmsCount} to go`}
           </p>
         </div>
       </section>

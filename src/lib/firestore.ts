@@ -1,18 +1,23 @@
 import {
   Timestamp,
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
+  orderBy,
+  query,
   setDoc,
+  where,
   writeBatch,
   type Firestore,
   type Unsubscribe,
 } from "firebase/firestore";
 
-import { DEFAULT_USER_SETTINGS, type Prospect, type UserSettings } from "@/types";
+import { DEFAULT_USER_SETTINGS, type Note, type Prospect, type UserSettings } from "@/types";
 
 // ── Path helpers ────────────────────────────────────────────────────────────
 
@@ -157,6 +162,66 @@ export function subscribeToSettings(
 
 export async function writeSettings(db: Firestore, teamId: string, settings: UserSettings): Promise<void> {
   await setDoc(settingsDoc(db, teamId), settings, { merge: true });
+}
+
+// ── Notes ─────────────────────────────────────────────────────────────────────
+
+export function notesCol(db: Firestore, teamId: string, prospectId: string) {
+  return collection(db, "teams", teamId, "prospects", prospectId, "notes");
+}
+
+function toNoteFirestore(note: Note): Record<string, unknown> {
+  return { ...note, createdAt: Timestamp.fromDate(note.createdAt) };
+}
+
+function noteFromFirestore(id: string, data: Record<string, unknown>): Note {
+  return {
+    id,
+    content:   String(data.content   ?? ""),
+    type:      (data.type as Note["type"]) ?? "note",
+    createdBy: String(data.createdBy ?? ""),
+    createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(),
+  };
+}
+
+export async function addNote(
+  db: Firestore,
+  teamId: string,
+  prospectId: string,
+  note: Note,
+): Promise<void> {
+  await setDoc(doc(notesCol(db, teamId, prospectId), note.id), toNoteFirestore(note));
+}
+
+export function subscribeToNotes(
+  db: Firestore,
+  teamId: string,
+  prospectId: string,
+  onData: (notes: Note[]) => void,
+  onError: (err: Error) => void,
+): Unsubscribe {
+  const q = query(notesCol(db, teamId, prospectId), orderBy("createdAt", "desc"), limit(50));
+  return onSnapshot(
+    q,
+    (snap) => onData(snap.docs.map((d) => noteFromFirestore(d.id, d.data() as Record<string, unknown>))),
+    onError,
+  );
+}
+
+/** Query today's message_sent notes across all prospects for a team (requires Firestore composite index). */
+export function subscribeTodayDmCount(
+  db: Firestore,
+  teamId: string,
+  since: Date,
+  onData: (count: number) => void,
+): Unsubscribe {
+  const q = query(
+    collectionGroup(db, "notes"),
+    where("createdBy", "==", teamId),
+    where("type", "==", "message_sent"),
+    where("createdAt", ">=", Timestamp.fromDate(since)),
+  );
+  return onSnapshot(q, (snap) => onData(snap.size), () => onData(0));
 }
 
 // ── Utils ─────────────────────────────────────────────────────────────────────

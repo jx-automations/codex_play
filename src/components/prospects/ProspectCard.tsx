@@ -27,7 +27,7 @@ export function ProspectCard({ prospect }: ProspectCardProps) {
   return (
     <Link
       href={`/prospects/${prospect.id}`}
-      className="flex items-center gap-3 border-b border-neutral-100 bg-white px-4 py-3.5 transition-colors duration-150 hover:bg-neutral-50 active:bg-neutral-100"
+      className="flex items-center gap-3 border-b border-neutral-100 bg-white px-4 py-3.5 transition-colors duration-150 hover:bg-neutral-50 active:bg-neutral-100 mx-4 mb-2 rounded-2xl shadow-sm"
     >
       {/* Avatar */}
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light text-sm font-semibold text-primary">

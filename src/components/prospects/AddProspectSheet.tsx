@@ -194,13 +194,13 @@ export function AddProspectSheet() {
     }
   }
 
-  if (!isOpen) return null;
-
   return (
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
         onClick={close}
         aria-hidden="true"
       />
@@ -210,14 +210,16 @@ export function AddProspectSheet() {
         role="dialog"
         aria-modal="true"
         aria-label="Add prospect"
-        className="fixed bottom-0 left-0 right-0 z-50 max-h-[92dvh] overflow-y-auto rounded-t-3xl bg-white shadow-lg md:left-auto md:right-6 md:bottom-6 md:w-[420px] md:rounded-3xl"
+        className={`fixed bottom-0 left-0 right-0 z-50 max-h-[92dvh] overflow-y-auto rounded-t-3xl bg-white shadow-lg transition-transform duration-300 ease-out md:left-auto md:right-6 md:bottom-6 md:w-[420px] md:rounded-3xl ${
+          isOpen ? "translate-y-0" : "translate-y-full pointer-events-none"
+        }`}
       >
-        {/* Handle indicator */}
+        {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="h-1 w-10 rounded-full bg-neutral-200" />
         </div>
 
-        <div className="px-5 pb-8 pt-3">
+        <div className="px-5 pt-3 pb-8" style={{ paddingBottom: "calc(2rem + env(safe-area-inset-bottom, 0px))" }}>
           {/* Header */}
           <div className="mb-5 flex items-center justify-between">
             <h2 className="font-heading text-lg font-semibold text-neutral-900">Add Prospect</h2>
@@ -290,12 +292,20 @@ export function AddProspectSheet() {
                   className="h-10 w-10 rounded-full object-cover"
                   width={40}
                   height={40}
+                  onError={(e) => {
+                    const t = e.currentTarget;
+                    t.style.display = "none";
+                    const fb = t.nextElementSibling as HTMLElement | null;
+                    if (fb) fb.style.display = "flex";
+                  }}
                 />
-              ) : (
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-light text-sm font-semibold text-primary">
-                  {extractHandle(handle).slice(0, 2).toUpperCase()}
-                </div>
-              )}
+              ) : null}
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-light text-sm font-semibold text-primary"
+                style={{ display: profileData.profilePicUrl ? "none" : "flex" }}
+              >
+                {extractHandle(handle).slice(0, 2).toUpperCase()}
+              </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-neutral-900">
                   {profileData.fullName || `@${extractHandle(handle)}`}
