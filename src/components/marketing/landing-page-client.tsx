@@ -1,10 +1,13 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 import { useAuth } from "@/context/auth-context";
 
 import styles from "@/app/page.module.css";
+
+const AUTH_NEXT_KEY = "auth_next";
 
 export function LandingPageClient() {
   const router = useRouter();
@@ -12,17 +15,29 @@ export function LandingPageClient() {
   const nextHref = searchParams.get("next") || "/today";
   const { configured, error, signInWithGoogle, signOutUser, status } = useAuth();
 
+  // After the Google redirect round-trip, onAuthStateChanged fires and
+  // status becomes "authenticated". If we stored a destination before
+  // leaving, navigate there now.
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    const dest = sessionStorage.getItem(AUTH_NEXT_KEY) ?? null;
+    if (!dest) return;
+    sessionStorage.removeItem(AUTH_NEXT_KEY);
+    router.push(dest);
+  }, [status, router]);
+
   async function handleLaunch() {
     if (status === "authenticated") {
       router.push(nextHref);
       return;
     }
 
+    // Store destination before the full-page redirect to Google
+    sessionStorage.setItem(AUTH_NEXT_KEY, nextHref);
     try {
       await signInWithGoogle();
-      router.push(nextHref);
     } catch {
-      return;
+      sessionStorage.removeItem(AUTH_NEXT_KEY);
     }
   }
 

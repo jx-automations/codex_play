@@ -1,6 +1,6 @@
 "use client";
 
-import { onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth";
+import { getRedirectResult, onAuthStateChanged, signInWithRedirect, signOut, type User } from "firebase/auth";
 import {
   createContext,
   useContext,
@@ -37,6 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const auth = getFirebaseAuth();
     if (!auth) return undefined;
 
+    // Pick up the result after a signInWithRedirect round-trip
+    getRedirectResult(auth).catch((redirectError) => {
+      setError(redirectError instanceof Error ? redirectError.message : "Sign-in failed.");
+      setStatus("unauthenticated");
+    });
+
     const unsubscribe = onAuthStateChanged(
       auth,
       (nextUser) => {
@@ -66,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setError(null);
     try {
-      await signInWithPopup(auth, createGoogleProvider());
+      await signInWithRedirect(auth, createGoogleProvider());
     } catch (authError) {
       setError(authError instanceof Error ? authError.message : "Sign in failed.");
       throw authError;
